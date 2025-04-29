@@ -66,17 +66,9 @@ Based on this information, perform the following tasks:
 
 2. Generate a professional 3-page marketing performance report for "${brandName}", focused on the "${category}" and "${subCategory}" industry sectors, and the "${focusAudience}" target audience.
 
-**The report must include:**
-- A **pie chart** showing audience distribution across different regions (e.g., Americas, EMEA, APAC).
-- A **bar chart** showing revenue growth trend over the last 6 months.
-
 **Format the final output strictly in valid JSON, separated into these sections:**
 - "title": A powerful and professional title for the report.
-- "summary": A 200–300 word executive summary about "${brandName}"'s brand position, market strategy, and future vision.
-- "charts": A JSON object containing:
-  - "audienceDistributionPieChart": with a description and simulated data points.
-  - "revenueGrowthBarChart": with a description and simulated data points.
-
+- "summary": A 400–500 word executive summary about "${brandName}"'s brand position, market strategy, and future vision.
 **Instructions:**
 - Ensure all sections are filled thoughtfully.
 - Keep the tone innovative, inspiring, yet professional.
@@ -98,118 +90,8 @@ Based on this information, perform the following tasks:
 });
 
 // ====================================================================
-// 2️⃣ Route to get summarized market trends (your existing code)
-// ====================================================================
-const HF_API_URL =
-  "https://api-inference.huggingface.co/models/facebook/bart-large-cnn";
-const HF_API_KEY = process.env.HUGGINGFACE_API_KEY;
-
-app.post("/get-market-trends", async (req, res) => {
-  const { marketPrompt } = req.body;
-  console.log("res req success " + marketPrompt);
-
-  try {
-    const hfRes = await fetch(HF_API_URL, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${HF_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ inputs: marketPrompt }),
-    });
-
-    const data = await hfRes.json();
-
-    if (data.error) {
-      console.error("HuggingFace Error:", data.error);
-      return res.status(500).json({ error: "Hugging Face API error" });
-    }
-
-    const summary = data[0]?.summary_text || "No summary returned.";
-    console.log("hugging face Response " + summary);
-    res.json({ summary });
-  } catch (err) {
-    console.error("Server Error:", err.message);
-    res.status(500).json({ error: "Failed to get market summary." });
-  }
-});
-
-// ====================================================================
 // 3️⃣ NEW Route: Get competitors list (OpenRouter - LLM generated)
 // ====================================================================
-// app.post("/get-competitors", async (req, res) => {
-//   const { brandName, category, subCategory } = req.body;
-//   console.log("req body ", req.body);
-
-//   if (!brandName || !category || !subCategory) {
-//     return res.status(400).json({ error: "Missing required fields" });
-//   }
-
-//   try {
-//     const prompt = `
-//   Suggest exactly 8 competitor company names for a brand called "${brandName}" in the "${category}" industry, specifically under "${subCategory}" subcategory, dont give any description just give compitor names .
-
-//   Important Instructions:
-//   - Competitor should be registered with any stock-exchange
-//   - Only return competitor names.
-//   - competitors name should be display in content inside messages
-//   - Only comma-separated names, like this format:
-//   Nike, Adidas, Puma, Reebok, Under Armour
-
-//   `;
-
-//     const response = await fetch(
-//       "https://openrouter.ai/api/v1/chat/completions",
-//       {
-//         method: "POST",
-//         headers: {
-//           Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`, // Use from your .env
-//           "Content-Type": "application/json",
-//         },
-//         body: JSON.stringify({
-//           model: "deepseek/deepseek-r1:free", // <-- updated model
-//           messages: [{ role: "user", content: prompt }],
-//           temperature: 0.7,
-//           max_tokens: 300, // you can increase token limit slightly
-//         }),
-//       }
-//     );
-//     //************************************************************************************** */
-//     // const data = await response.json();
-
-//     // const aiText = data?.choices?.[0]?.message?.content || "";
-
-//     // const competitors = aiText
-//     //   .split(",")
-//     //   .map((c) => c.trim())
-//     //   .filter((c) => c.length > 0);
-//     // console.log("data ser", competitors);
-//     // res.status(200).json({ competitors });
-
-//     //*********************************************************************************** */
-//     const data = await response.json();
-//     console.log("⚡ Full OpenRouter response:", JSON.stringify(data, null, 2));
-
-//     const aiText = data?.choices?.[0]?.message?.content || "";
-
-//     let competitors = [];
-
-//     if (typeof aiText === "string") {
-//       competitors = aiText
-//         .split(",")
-//         .map((c) => c.trim())
-//         .filter((c) => c.length > 0);
-//     } else {
-//       console.error("AI response is not a string:", aiText);
-//       competitors = [];
-//     }
-
-//     res.status(200).json({ competitors });
-//   } catch (error) {
-//     console.error("Error fetching from OpenRouter:", error);
-//     res.status(500).json({ error: "Failed to fetch competitors" });
-//   }
-// });
 
 function extractJsonArray(text) {
   text = text.trim();
